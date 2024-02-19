@@ -106,3 +106,45 @@ freq_table <- freq(grid_count, useNA='no') %>%
 if (max(freq_table$value) > 1) {
   cat("Unfortunately we are more fucked than the student of Paride, thus need to clean the data")
 }
+
+# clean process --
+dat$ID <- 1:nrow(dat)
+
+valid_cells <- sum(!is.na(grid_count[]))
+
+ids <- rep(NA, ncell(grid_count))
+
+ids[!is.na(grid_count[])] <- 1:valid_cells
+
+grid_count[] <- ids
+
+raster_cells<- grid_count@data@values %>% as.data.frame()
+
+cell_ids <- extract(grid_count, occ_points)
+
+point_counts_per_cell <- as.data.frame(table(cell_ids))
+colnames(point_counts_per_cell) <- c("Cell_ID", "Count")
+
+points_df <- as.data.frame(occ_points)
+points_df$Cell_ID <- extract(grid_count, occ_points, cellnumbers=TRUE)[,1]
+
+names(points_df)
+names(point_counts_per_cell)
+
+points_df$Cell_ID <- as.character(points_df$Cell_ID)
+point_counts_per_cell$Cell_ID <- as.character(point_counts_per_cell$Cell_ID)
+
+points_with_cell_ids <- points_df %>%
+  left_join(point_counts_per_cell, by = "Cell_ID")
+
+#select just one point:
+unique_points_per_cell <- points_with_cell_ids %>%
+  group_by(Cell_ID) %>%
+  slice(1) %>%
+  ungroup()
+
+if(valid_cells == nrow(unique_points_per_cell)) {
+  cat("congrats we retained just one point per cell")
+} else {
+  cat("you are useless, make it again")
+}
