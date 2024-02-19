@@ -5,4 +5,4 @@ Assignment(s):
 - (2) Could you theoretically write an R script that defines a shape (lets say pentagon) with a predetermined area (see Figure 1 below) and then maps another pentagon over it to estimate the % overlap (Ratio between star / Pentagon) where the shape of the Pentagon depends on the Dimension of each Corner of the Pentagon (see figure 2 below)
 
 <img align="right" src="fig/fig1.jpeg" width="300" style="margin-top: 80px">                                                                                    
- <img align="right" src="fig2.jpeg" width="300" style="margin-top: 80px">
+ <img align="right" src="fig/fig2.jpeg" width="300" style="margin-top: 80px">
