@@ -11,6 +11,10 @@ suppressMessages({
   library(countrycode)
   library(readxl)
   library(rgbif)
+  library(sdm)
+  library(raster)
+  library(usdm)
+  library(dismo)
   library(sf)
   library(writexl)
   library(rgdal)
@@ -20,7 +24,7 @@ suppressMessages({
 
 
 
-n <- "Solenopsis geminata"
+n <- "Solenopsis_geminata"
 keys <- tibble(Species = character(), key = integer())
 #for (n in spn) {
   sp <- occ_data(scientificName = n, hasCoordinate = TRUE, occurrenceStatus = "PRESENT",
@@ -148,3 +152,35 @@ if(valid_cells == nrow(unique_points_per_cell)) {
 } else {
   cat("you are useless, make it again")
 }
+
+
+## basic SDM ----
+
+unique_points_per_cell$species <- n
+spg <- unique_points_per_cell[, c("lon", "lat","species")]
+
+coordinates(spg) <- ~lon+lat
+proj4string(spg) <- CRS("+proj=longlat +datum=WGS84")
+
+
+ex <- raster::extract(bio,spg)
+head(ex)
+v <- vifstep(ex)
+
+#vifcor
+v
+bioc <- exclude(bio, v)
+
+spg$species <- 1
+d <- sdmData(species~., spg, predictors= bioc, bg = list(method='gRandom',n=10000))
+d
+
+getmethodNames()
+m <- sdm(species~., d, methods=c('glm','gam','rf'), replication=c('sub'),
+         test.p=30,n=5, parallelSetting=list(ncore=4,method='parallel'))
+
+
+
+
+
+
