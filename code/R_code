@@ -1,0 +1,108 @@
+
+# Ismael Soto
+
+suppressMessages({
+  library(dplyr, quiet = TRUE, warn.conflicts = FALSE)
+  library(reshape, quiet = TRUE, warn.conflicts = FALSE)
+  library(tidyr)  
+  library(stringr)
+  library(raster)
+  library(xlsx)
+  library(countrycode)
+  library(readxl)
+  library(rgbif)
+  library(sf)
+  library(writexl)
+  library(rgdal)
+  library(devtools)
+  Sys.setenv(LANGUAGE = "en")
+})
+
+
+
+n <- "Solenopsis geminata"
+keys <- tibble(Species = character(), key = integer())
+#for (n in spn) {
+  sp <- occ_data(scientificName = n, hasCoordinate = TRUE, occurrenceStatus = "PRESENT",
+                 limit = 5)
+  sp <- sp[["data"]]
+  
+  if (nrow(sp) > 0) {
+    key <- sp$taxonKey[1]
+  } else {
+    key <- NA
+  }
+  
+  keys <- rbind(keys, tibble(Species = n, key = key))
+  cat(n, "Extracted\n")
+#}
+
+unique(keys$Species)
+
+sp <- unique(keys$key)
+s<- sp[1]
+dois <- tibble(Species = character(), DOI = character())
+#for(s in sp){
+  x = occ_download(
+    pred_in("basisOfRecord", c("MACHINE_OBSERVATION", "HUMAN_OBSERVATION")),
+    pred_in("taxonKey", s),
+    pred_and(pred_gte("year", 1960), pred_lte("year", 2023)),
+    pred("hasCoordinate", TRUE),
+    pred_lte("coordinateUncertaintyInMeters", 9999), 
+    user = "ismaelsoto",
+    pwd = "Ismaputas123.",
+    email = "isma-sa@hotmail.com"
+  )
+  status <- occ_download_meta(x)$status
+  
+  while(status != "SUCCEEDED") {
+    Sys.sleep(15) 
+    status <- occ_download_meta(x)$status
+  }
+  
+  z <- occ_download_meta(x)
+  doi2 <- z$doi 
+  dois <- rbind(dois, tibble(Species = s, DOI = doi2))
+  cat(s, "downloaded\n")
+  #}
+
+
+colnames(dois)[1] = "key"
+p <-dois %>% left_join(keys, by ="key" )  
+
+# see download data
+dat <- occ_download_get('0002900-240216155721649') %>%
+  occ_download_import()
+
+names(dat)
+world_map <- map_data("world")
+
+# Plot data
+ggplot() +
+  geom_polygon(data = world_map, aes(x = long, y = lat, group = group), fill = "lightgray", color = "grey8") +
+  geom_point(data = dat, aes(x = decimalLongitude, y = decimalLatitude), color = "red", size = 1.2) +
+  theme_bw() +
+  labs(x = "Longitude", y = "Latitude")
+
+# Place GBIF records in GRID ----
+bio <- raster::getData('worldclim', var='bio', res=5)
+
+grid_extent <- extent(-180, 180, -60, 90)  
+
+#Grid
+grid <- raster(grid_extent, res = 0.08333333)
+
+grid_count <- raster(grid)
+
+occ_points <- sp::SpatialPoints(data.frame(lon = dat$decimalLongitude, 
+                                           lat = dat$decimalLatitude))
+grid_count <- rasterize(occ_points, grid_count, fun = 'count')
+
+# Remove NA values and create a frequency table of the counts
+freq_table <- freq(grid_count, useNA='no') %>%
+  as.data.frame() %>%
+  filter(value > 0) 
+
+if (max(freq_table$value) > 1) {
+  cat("Unfortunately we are more fucked than the student of Paride, thus need to clean the data")
+}
