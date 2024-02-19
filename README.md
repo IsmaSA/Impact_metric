@@ -12,4 +12,6 @@ Extra notes:
 
 <img align="left" src="fig/fig1.jpeg" width="400">
 <img align="right" src="fig/fig2.jpeg" width="400">
-<img align="center" src="fig/fig3.jpeg" width="400">
+
+
+<img align="right" src="fig/fig3.jpeg" width="400">
