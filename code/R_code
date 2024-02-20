@@ -503,3 +503,5 @@ ggplot() +
   theme_void()
 
 warning(":----------D")
+cat("you cna create several pentagons overalping for different future scenatios")
+
