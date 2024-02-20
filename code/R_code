@@ -469,26 +469,37 @@ for (i in 1:nrow(world)) {
   }
 
 print(total_suitability)
+
+
 # The hexagon:
 
-hexagon <- function(size = 1) {
-  angles <- seq(0, 2 * pi, length.out = 7)
-  x <- size * cos(angles)
-  y <- size * sin(angles)
-  return(data.frame(x = x, y = y))
-}
+suitability_by_continent <- data.frame(
+  Continent = c("Africa", "Americas", "Asia", "Europe", "Oceania"),
+  Normalized = c(0.6764629, 1, 0.9838617, 0.05716721, 0.1819614)
+)
 
-hex <- hexagon(size = 1)
-continent_names <- c("AF", "EU", "AS", "OC", "SA", "NA")
+angles <- seq(0, 2 * pi, length.out = 6)
+angles <- angles[1:5]  # Keep only the first 5 points for a pentagon
 
-plot(hex$x, hex$y, type = 'l', asp = 1, xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5), xaxt = 'n', yaxt = 'n', bty = 'n')
+suitability_by_continent$x <- suitability_by_continent$Normalized * cos(angles)
+suitability_by_continent$y <- suitability_by_continent$Normalized * sin(angles)
 
-text(hex$x, hex$y, labels = continent_names, pos = 4, cex = 0.8)
+plot_data <- suitability_by_continent
 
+plot_data <- rbind(plot_data, plot_data[1, ])
 
+pentagon_data <- data.frame(
+  x = cos(angles), y = sin(angles))
 
+pentagon_data <- rbind(pentagon_data, pentagon_data[1, ])
 
+ggplot() +
+  geom_polygon(data = pentagon_data, aes(x = x, y = y, group = 1), fill = NA, color = 'black', linetype = "dotted") +
+  geom_polygon(data = plot_data, aes(x = x, y = y, group = 1), fill = 'pink', alpha = 0.5) +
+  geom_path(data = plot_data, aes(x = x, y = y, group = 1), color = 'red', size = 1) +
+  geom_point(data = plot_data, aes(x = x, y = y), color = 'red', size = 4) +
+  geom_text(data = plot_data, aes(x = x, y = y, label = Continent), vjust = -1, size = 3) +
+  coord_equal() +
+  theme_void()
 
-
-
-
+warning(":----------D")
