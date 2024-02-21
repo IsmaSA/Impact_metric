@@ -11,8 +11,23 @@ Extra notes:
 **Note 1:** so if the species is everywhere in Germany but nowhere else, we would only Need the Points that define the shape of its presence, which woul then more or less overlap with Germanys shape
 **Note 2:** If there were regions without it in Germany, like a hole, that would become more complex, but we could generalize it and assume its there as well or could be there as well
 
-<img align="left" src="fig/fig1.jpeg" width="400">
-<img align="right" src="fig/fig2.jpeg" width="400">
+<table>
+  <tr>
+    <td>
+      <img src="fig/fig1.jpeg" width="400">
+    </td>
+    <td>
+      <img src="fig/fig2.jpeg" width="400">
+    </td>
+  </tr>
+</table>
+
+<img align="left" src="fig/fig3.jpeg" width="400">
 
 
-<img align="right" src="fig/fig3.jpeg" width="400">
+
+- ## Final result:
+
+<img align="bottom" src="fig/Rplot.jpeg" width="400">
+
+
