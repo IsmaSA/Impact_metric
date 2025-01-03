@@ -1,0 +1,27 @@
+Package: metrics
+Title: The pakage calculates the impact of invasive species and show it
+        on a radarchart
+Version: 0.1.0
+Authors@R: 
+    c(
+      person("Ismael", "Soto", email = "isotoalmena@frov.jcu.cz", role = c("aut", "cre")),
+      person("Emir", "Celik", email = "celike00@frov.jcu.cz", role = c("aut"))
+    )
+Description: This package uses some r packages and user inputs to model
+    the impact of invasive specieses and draw a radarchart diagram to show their
+    corespond impact
+License: MIT + file LICENSE
+Encoding: UTF-8
+lazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Config/testthat/edition: 3
+Imports: dplyr, DT, ggplot2, invacost, rgbif, shiny, shinydashboard,
+        countrycode, fmsb
+Suggests: knitr, testthat, rmarkdown
+VignetteBuilder: knitr
+NeedsCompilation: no
+Packaged: 2024-12-31 09:27:48 UTC; Emir
+Author: Ismael Soto [aut, cre],
+  Emir Celik [aut]
+Maintainer: Ismael Soto <isotoalmena@frov.jcu.cz>
